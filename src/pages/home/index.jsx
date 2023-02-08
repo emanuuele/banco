@@ -3,7 +3,8 @@ import { verificarTipoValor } from '../../fungeng.js'
 import Botao from '../../components/Botao.jsx';
 import { formatToBRL } from "brazilian-values";
 import { ToastContainer, toast } from "react-toastify";
-import Modal from 'react-modal';
+import Modal from "../../components/Modal.jsx";
+
 
 function Home() {
     const [saldo, setSaldo] = useState(Number(localStorage.getItem("saldo")) || 0);
@@ -86,32 +87,8 @@ function Home() {
                 <Botao name='Depositar' funcao={openModalDeposit} color='green' />
                 <Botao name='Sacar' funcao={openModalWithdraw} color='red' />
 
-                <Modal
-                    isOpen={modalIsOpen}
-                    onAfterOpen={afterOpenModal}
-                    onRequestClose={closeModal}
-                    style={customStyles}
-                    contentLabel="Example Modal"
-                >
-                    <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
-                    <button onClick={closeModal}>close</button>
-                    <div>Digite o valor: </div>
-                    <input value={valor} onChange={e => setValor(e.target.value)} placeholder='Digite o valor: ' />
-                    <button onClick={() => deposit()}>Enviar</button>
-                </Modal>
-                <Modal
-                    isOpen={modalIsOpen}
-                    onAfterOpen={afterOpenModal}
-                    onRequestClose={closeModal}
-                    style={customStyles}
-                    contentLabel="Example Modal"
-                >
-                    <h2 ref={(_subtitle) => (subtitle = _subtitle)}>Hello</h2>
-                    <button onClick={closeModal}>close</button>
-                    <div>Digite o valor: </div>
-                    <input value={valor} onChange={e => setValor(e.target.value)} placeholder='Digite o valor: ' />
-                    <button onClick={() => withdraw()}>Enviar</button>
-                </Modal>
+                <Modal funcao={deposit}/>
+                <Modal funcao={withdraw}/>
                 {exibirSaldo && <span>Saldo: {formatToBRL(saldo)}</span>}
                 <Botao
                     color='black'
