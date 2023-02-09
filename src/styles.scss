@@ -59,3 +59,20 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
 	-moz-appearance: textfield;
 }
+table{
+	text-align: center;
+	th{
+		width: 100px;
+		height: 15px;
+		color: #757575;
+	}
+}
+.close{
+	height: 25px;
+	width: 25px;
+	border-radius: 50%;
+	background-color: red;
+	color: #fff;
+	border: none;
+	cursor: pointer;
+}

@@ -24,10 +24,28 @@ function Home() {
     const [saldo, setSaldo] = useState(Number(localStorage.getItem('saldo')) || 0);
     const [valor, setValor] = useState(null);
     const [humor, setHumor] = useState('😭');
-    const [exibirSaldo, setExibirSaldo] = useState(true);
     const [modalDepositIsOpen, setModalDepositIsOpen] = React.useState(false);
     const [modalWithdrawIsOpen, setModalWithdrawIsOpen] = React.useState(false);
+    const [modalExtractIsOpen, setModalExtractIsOpen] = React.useState(false);
     const [eyeOpened, setEyeOpened] = useState(true)
+    const [extract, setExtract] = useState([{ action: 'W', date: new Date(), valor: 123 }])
+
+    const user = {
+        name: "Emanuele"
+    }
+
+    function addToExtract(action, valor) {
+        setExtract(() => {
+            const newExtract = [...extract]
+
+            newExtract.unshift({ action: action, date: new Date(), valor: valor })
+
+            return newExtract
+        })
+    }
+
+    console.log(extract)
+
 
     function saldoAlto() {
         if (saldo >= 1000) {
@@ -39,8 +57,6 @@ function Home() {
         }
     }
 
-    let subtitle;
-
     function deposit() {
         if (!valor) {
             toast.error('Entre com um valor para depósito');
@@ -48,12 +64,11 @@ function Home() {
         }
 
         if (verificarTipoValor(valor) == false) return;
-
         setSaldo(saldo + Number(valor));
         setValor(null);
-
         toast.success('Depósito confirmado!');
         closeModal('deposit');
+        addToExtract("Deposito", valor)
     }
 
     function withdraw() {
@@ -61,26 +76,33 @@ function Home() {
             toast.error('Entre com um valor para saque');
             return;
         }
-
         if (verificarTipoValor(valor) == false) return;
-
         if (Number(valor) > saldo) {
             toast.error('Saldo insuficiente');
         } else {
             setSaldo(saldo - Number(valor));
             setValor(null);
+            addToExtract("Saque", valor)
 
-            toast.success('Depósito confirmado!');
-            closeModal('deposit');
+            toast.success('Saque confirmado!');
+            closeModal('Saque');
         }
     }
 
     function afterOpenModal() {
-        subtitle.style.color = '#f00';
+        //subtitle.style.color = '#f00';
     }
 
     function closeModal(modaType) {
-        modaType == 'deposit' ? setModalDepositIsOpen(false) : setModalWithdrawIsOpen(false);
+
+        if (modaType == 'deposit') {
+            setModalDepositIsOpen(false)
+        }
+        else if (modaType == 'withdraw') {
+            setModalWithdrawIsOpen(false)
+        } else {
+            setModalExtractIsOpen(false)
+        }
     }
 
     useEffect(() => {
@@ -97,6 +119,7 @@ function Home() {
             <div className='tela'>
                 <Botao name='Depositar' funcao={() => setModalDepositIsOpen(true)} color='green' />
                 <Botao name='Sacar' funcao={() => setModalWithdrawIsOpen(true)} color='red' />
+                <Botao name='Extrato' funcao={() => setModalExtractIsOpen(true)} color='black' />
 
                 {eyeOpened && <>Saldo: {formatToBRL(saldo)}</>}
 
@@ -108,10 +131,11 @@ function Home() {
                     isOpen={modalDepositIsOpen}
                     onAfterOpen={afterOpenModal}
                     onRequestClose={() => closeModal('deposit')}
-                    style={customStyles}
                     contentLabel='Example Modal'
+                    style={customStyles}
                 >
                     <div className='content'>
+                    <button onClick={() => closeModal('extract')} className='close'>X</button>
                         <h2>Digite um valor de Depósito</h2>
                         <div>Digite o valor: </div>
                         <div className='content-actions'>
@@ -125,7 +149,7 @@ function Home() {
                             <button className='button' onClick={() => deposit()}>
                                 Depositar
                             </button>
-                            <button onClick={() => closeModal('deposit')}>X</button>
+                            
                         </div>
                     </div>
                 </Modal>
@@ -138,6 +162,7 @@ function Home() {
                     contentLabel='Example Modal'
                 >
                     <div className='content'>
+                    <button onClick={() => closeModal('extract')} className='close'>X</button>
                         <h2>Digite um Saque</h2>
                         <div>Digite o valor: </div>
                         <div className='content-actions'>
@@ -151,11 +176,33 @@ function Home() {
                             <button className='button' onClick={() => withdraw()}>
                                 Sacar
                             </button>
-                            <button onClick={() => closeModal('withdraw')}>X</button>
                         </div>
                     </div>
                 </Modal>
 
+                <Modal
+                    isOpen={modalExtractIsOpen}
+                    onAfterOpen={afterOpenModal}
+                    onRequestClose={() => closeModal('extract')}
+                    contentLabel='Example Modal'
+                    style={customStyles}
+                ><button onClick={() => closeModal('extract')} className='close'>X</button>
+                    <div className='content'>
+                        {extract.map((item) => {
+                            return (
+                                <table>
+                                    <tr>
+                                        <th>Valor</th><th>Tipo</th><th>Data</th>
+                                    </tr>
+                                    <tr>
+                                        <td>{item.valor}</td><td>{item.action}</td><td>{'09/02/2023'}</td>
+                                    </tr>
+                                </table>
+                            )
+                        })}
+                        
+                    </div>
+                </Modal>
             </div>
             <ToastContainer />
         </div>
