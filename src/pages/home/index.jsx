@@ -28,7 +28,7 @@ function Home() {
     const [modalWithdrawIsOpen, setModalWithdrawIsOpen] = React.useState(false);
     const [modalExtractIsOpen, setModalExtractIsOpen] = React.useState(false);
     const [eyeOpened, setEyeOpened] = useState(true)
-    const [extract, setExtract] = useState([{ action: 'W', date: new Date(), valor: 123 }])
+    const [extract, setExtract] = useState([{ action: null, date: null, valor: null }])
 
     const user = {
         name: "Emanuele"
@@ -37,8 +37,9 @@ function Home() {
     function addToExtract(action, valor) {
         setExtract(() => {
             const newExtract = [...extract]
+            let dateString = `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
 
-            newExtract.unshift({ action: action, date: new Date(), valor: valor })
+            newExtract.unshift({ action: action, date: dateString, valor: valor })
 
             return newExtract
         })
@@ -135,7 +136,7 @@ function Home() {
                     style={customStyles}
                 >
                     <div className='content'>
-                    <button onClick={() => closeModal('extract')} className='close'>X</button>
+                        <button onClick={() => closeModal('deposit')} className='close'>X</button>
                         <h2>Digite um valor de Depósito</h2>
                         <div>Digite o valor: </div>
                         <div className='content-actions'>
@@ -149,7 +150,6 @@ function Home() {
                             <button className='button' onClick={() => deposit()}>
                                 Depositar
                             </button>
-                            
                         </div>
                     </div>
                 </Modal>
@@ -162,7 +162,7 @@ function Home() {
                     contentLabel='Example Modal'
                 >
                     <div className='content'>
-                    <button onClick={() => closeModal('extract')} className='close'>X</button>
+                        <button onClick={() => closeModal('withdraw')} className='close'>X</button>
                         <h2>Digite um Saque</h2>
                         <div>Digite o valor: </div>
                         <div className='content-actions'>
@@ -187,20 +187,25 @@ function Home() {
                     contentLabel='Example Modal'
                     style={customStyles}
                 ><button onClick={() => closeModal('extract')} className='close'>X</button>
+                    <table>
+                        <tr>
+                            <th>Valor</th><th>Tipo</th><th>Data</th>
+                        </tr>
+                    </table>
                     <div className='content'>
                         {extract.map((item) => {
                             return (
-                                <table>
-                                    <tr>
-                                        <th>Valor</th><th>Tipo</th><th>Data</th>
-                                    </tr>
-                                    <tr>
-                                        <td>{item.valor}</td><td>{item.action}</td><td>{'09/02/2023'}</td>
-                                    </tr>
-                                </table>
+                                <div>
+
+                                    <table>
+                                        <tr>
+                                            <td>{item.valor}</td><td>{item.action}</td><td>{item.date}</td>
+                                        </tr>
+                                    </table>
+                                </div>
                             )
                         })}
-                        
+
                     </div>
                 </Modal>
             </div>
