@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { formatToBRL } from 'brazilian-values';
 import { ToastContainer, toast } from 'react-toastify';
 import Modal from 'react-modal';
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai'
+import { AiFillEye, AiFillEyeInvisible, AiFillCloseCircle } from 'react-icons/ai'
+import { Link } from 'react-router-dom';
 
 import { verificarTipoValor } from '../../fungeng';
 import Botao from '../../components/Botao';
+
 
 import './styles.scss';
 
@@ -20,7 +22,7 @@ const customStyles = {
     },
 };
 
-function Home() {
+const Home = ()=> {
     const [saldo, setSaldo] = useState(Number(localStorage.getItem('saldo')) || 0);
     const [valor, setValor] = useState(null);
     const [humor, setHumor] = useState('😭');
@@ -45,7 +47,6 @@ function Home() {
         })
     }
 
-    console.log(extract)
 
 
     function saldoAlto() {
@@ -86,8 +87,16 @@ function Home() {
             addToExtract("Saque", valor)
 
             toast.success('Saque confirmado!');
-            closeModal('Saque');
+            closeModal('withdraw');
         }
+    }
+    function withdrawAll() {
+        setSaldo(0);
+        setValor(null);
+        addToExtract("Saque", saldo)
+
+        toast.success('Saque confirmado!');
+        closeModal('withdraw');
     }
 
     function afterOpenModal() {
@@ -105,6 +114,8 @@ function Home() {
             setModalExtractIsOpen(false)
         }
     }
+    const biggerZero = extract.filter(valor => valor.valor > 0)
+    console.log(`maior que zero: ${biggerZero}`)
 
     useEffect(() => {
         saldoAlto();
@@ -116,7 +127,7 @@ function Home() {
 
     return (
         <div className='App'>
-            <h1>Meu banco: {humor} </h1>
+            <Link to='/Login' style={{marginLeft: '90%',backgroundColor: 'transparent', color:'black'}}> <AiFillCloseCircle size={'1.5rem'}/></Link>
             <div className='tela'>
                 <Botao name='Depositar' funcao={() => setModalDepositIsOpen(true)} color='green' />
                 <Botao name='Sacar' funcao={() => setModalWithdrawIsOpen(true)} color='red' />
@@ -176,6 +187,7 @@ function Home() {
                             <button className='button' onClick={() => withdraw()}>
                                 Sacar
                             </button>
+                            <button className='button' onClick={() => withdrawAll()}>Sacar {formatToBRL(saldo)}</button>
                         </div>
                     </div>
                 </Modal>
@@ -193,13 +205,13 @@ function Home() {
                         </tr>
                     </table>
                     <div className='content'>
-                        {extract.map((item) => {
+                        {biggerZero.map((item) => {
                             return (
                                 <div>
 
                                     <table>
                                         <tr>
-                                            <td>{item.valor}</td><td>{item.action}</td><td>{item.date}</td>
+                                            <td>{formatToBRL(item.valor)}</td><td>{item.action}</td><td>{item.date}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -208,6 +220,7 @@ function Home() {
 
                     </div>
                 </Modal>
+                
             </div>
             <ToastContainer />
         </div>
