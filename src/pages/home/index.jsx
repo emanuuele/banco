@@ -117,6 +117,8 @@ const Home = ()=> {
     const biggerZero = extract.filter(valor => valor.valor > 0)
     console.log(`maior que zero: ${biggerZero}`)
 
+    
+
     useEffect(() => {
         saldoAlto();
     }, [saldo]);
@@ -127,6 +129,7 @@ const Home = ()=> {
 
     return (
         <div className='App'>
+            <h1>Meu banco: {humor}</h1>
             <Link to='/Login' style={{marginLeft: '90%',backgroundColor: 'transparent', color:'black'}}> <AiFillCloseCircle size={'1.5rem'}/></Link>
             <div className='tela'>
                 <Botao name='Depositar' funcao={() => setModalDepositIsOpen(true)} color='green' />
