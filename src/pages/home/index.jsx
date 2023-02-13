@@ -5,9 +5,11 @@ import Modal from 'react-modal';
 import { AiFillEye, AiFillEyeInvisible, AiFillCloseCircle } from 'react-icons/ai'
 import { Link } from 'react-router-dom';
 import { clients } from '../../clients.js'
-import {cpf} from '../login/login'
+// import {cpf} from '../login/login'
 import { verificarTipoValor } from '../../fungeng';
 import Botao from '../../components/Botao';
+
+import { useParams } from 'react-router-dom';
 
 
 import './styles.scss';
@@ -24,30 +26,33 @@ const customStyles = {
 };
 
 const Home = () => {
+    let { cpf } = useParams();
+    const user = clients.filter(login => login.login == cpf)
+
     const [saldo, setSaldo] = useState(Number(user.saldo));
-    const [valor, setValor] = useState(Number(user.movimentacao.valor));
+    const [valor, setValor] = useState(0);
     const [humor, setHumor] = useState('😭');
     const [modalDepositIsOpen, setModalDepositIsOpen] = React.useState(false);
     const [modalWithdrawIsOpen, setModalWithdrawIsOpen] = React.useState(false);
     const [modalExtractIsOpen, setModalExtractIsOpen] = React.useState(false);
     const [eyeOpened, setEyeOpened] = useState(true)
-    const [extract, setExtract] = useState([{ action: null, date: null, valor: null }])
-
-    const user = clients.filter(login => login.login==cpf)
-    
+    const [extract, setExtract] = useState(user.movimentacoes)
 
     function addToExtract(action, valor) {
         setExtract(() => {
             const newExtract = [...extract]
             let dateString = `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
 
-            newExtract.unshift({ action: action, date: dateString, valor: valor })
+            newExtract.unshift({ tipo: action, data: dateString, valor: valor })
 
             return newExtract
         })
     }
 
-
+    React.useEffect(() => {
+        setSaldo(user[0].saldo)
+        setExtract(user[0].movimentacoes)
+    }, [])
 
     function saldoAlto() {
         if (saldo >= 1000) {
@@ -60,6 +65,7 @@ const Home = () => {
     }
 
     function deposit() {
+        // const deposit = user.movimentacoes.unshift({tipo: 'D', data:`${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`, valor: valor})
         if (!valor) {
             toast.error('Entre com um valor para depósito');
             return;
@@ -71,8 +77,8 @@ const Home = () => {
         toast.success('Depósito confirmado!');
         closeModal('deposit');
         addToExtract("Deposito", valor)
+        console.log(saldo)
     }
-
     function withdraw() {
         if (!valor) {
             toast.error('Entre com um valor para saque');
@@ -114,7 +120,11 @@ const Home = () => {
             setModalExtractIsOpen(false)
         }
     }
-    const biggerZero = extract.filter(valor => valor.valor > 0)
+
+    const biggerZero = extract?.filter(valor => valor.valor > 0)
+
+    console.log({ biggerZero })
+
     console.log(`maior que zero: ${biggerZero}`)
 
     useEffect(() => {
@@ -125,7 +135,11 @@ const Home = () => {
 
     return (
         <div className='App'>
-            <h1>Meu banco: {humor} </h1>
+            <h1>{user.map((item) => {
+                return (
+                    <div>{item.name} : {humor} </div> 
+                )
+            })}</h1>
             <Link to='/Login' style={{ marginLeft: '90%', backgroundColor: 'transparent', color: 'black' }}> <AiFillCloseCircle size={'1.5rem'} /></Link>
             <div className='tela'>
 
@@ -205,13 +219,13 @@ const Home = () => {
                         </tr>
                     </table>
                     <div className='content'>
-                        {biggerZero.map((item) => {
+                        {biggerZero?.map((item) => {
                             return (
                                 <div>
 
                                     <table>
                                         <tr>
-                                            <td>{formatToBRL(item.valor)}</td><td>{item.action}</td><td>{item.date}</td>
+                                            <td>{formatToBRL(item.valor)}</td><td>{item.tipo}</td><td>{item.data}</td>
                                         </tr>
                                     </table>
                                 </div>

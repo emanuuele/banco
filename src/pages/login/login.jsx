@@ -17,11 +17,11 @@ function Login() {
             if (element.login == cpf && element.senha == password) {
                 userNotFound = false
             }
-        });
+        });       
 
         if (userNotFound) return toast.error('login invalido')
         else {
-            navigate("/")
+            navigate(`/${cpf}`)
             toast.success('Bem vindo')
         }
     }
