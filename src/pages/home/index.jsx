@@ -4,7 +4,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import Modal from 'react-modal';
 import { AiFillEye, AiFillEyeInvisible, AiFillCloseCircle } from 'react-icons/ai'
 import { Link } from 'react-router-dom';
-
+import { clients } from '../../clients.js'
+import {cpf} from '../login/login'
 import { verificarTipoValor } from '../../fungeng';
 import Botao from '../../components/Botao';
 
@@ -22,9 +23,9 @@ const customStyles = {
     },
 };
 
-const Home = ()=> {
-    const [saldo, setSaldo] = useState(Number(localStorage.getItem('saldo')) || 0);
-    const [valor, setValor] = useState(null);
+const Home = () => {
+    const [saldo, setSaldo] = useState(Number(user.saldo));
+    const [valor, setValor] = useState(Number(user.movimentacao.valor));
     const [humor, setHumor] = useState('😭');
     const [modalDepositIsOpen, setModalDepositIsOpen] = React.useState(false);
     const [modalWithdrawIsOpen, setModalWithdrawIsOpen] = React.useState(false);
@@ -32,9 +33,8 @@ const Home = ()=> {
     const [eyeOpened, setEyeOpened] = useState(true)
     const [extract, setExtract] = useState([{ action: null, date: null, valor: null }])
 
-    const user = {
-        name: "Emanuele"
-    }
+    const user = clients.filter(login => login.login==cpf)
+    
 
     function addToExtract(action, valor) {
         setExtract(() => {
@@ -119,16 +119,16 @@ const Home = ()=> {
 
     useEffect(() => {
         saldoAlto();
-    }, [saldo]);
 
-    useEffect(() => {
         localStorage.setItem('saldo', saldo);
-    }, []);
+    }, [saldo]);
 
     return (
         <div className='App'>
-            <Link to='/Login' style={{marginLeft: '90%',backgroundColor: 'transparent', color:'black'}}> <AiFillCloseCircle size={'1.5rem'}/></Link>
+            <h1>Meu banco: {humor} </h1>
+            <Link to='/Login' style={{ marginLeft: '90%', backgroundColor: 'transparent', color: 'black' }}> <AiFillCloseCircle size={'1.5rem'} /></Link>
             <div className='tela'>
+
                 <Botao name='Depositar' funcao={() => setModalDepositIsOpen(true)} color='green' />
                 <Botao name='Sacar' funcao={() => setModalWithdrawIsOpen(true)} color='red' />
                 <Botao name='Extrato' funcao={() => setModalExtractIsOpen(true)} color='black' />
@@ -220,7 +220,7 @@ const Home = ()=> {
 
                     </div>
                 </Modal>
-                
+
             </div>
             <ToastContainer />
         </div>
