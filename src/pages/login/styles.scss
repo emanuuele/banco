@@ -25,20 +25,17 @@ input {
 	border: none;
 	display: block;
 	margin-top: 10px;
-	width: 95%;
+	width: 98%;
 }
 
-.login-button {
-	padding: 0.5rem ;
-	color: black;
-	border-radius: 20px;
-	margin-top: 33px;
-    display: inline-block;
-	color: aliceblue;
-}
+
 .login-button{
 	display: flex;
 	justify-content: center;
-	width: 95%;
+	width: 100%;
 	text-align: center;
+	padding: 0.5rem ;
+	color: black;
+	cursor: pointer;
+	color: aliceblue;
 }
