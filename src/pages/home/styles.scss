@@ -1,8 +1,9 @@
 .content {
 	.content-actions {
 		margin-top: 10px;
-    display: flex;
-    gap: 10px;
+		display: flex;
+		gap: 10px;
+		align-items: baseline;
 
 		input {
 			background-color: rgb(241, 241, 241);
@@ -14,24 +15,29 @@
 			color: #000;
 			box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 			border: none;
+			display: flex;
 		}
-    
-    .button {
-      color: #fff;
-      height: 2rem;
-      border: none;
-      background-color: #32612D;
-      border-radius: 10px;
-      width: 5rem;
-      cursor: pointer;
-    }
+
+		.button {
+			color: #fff;
+			height: 2rem;
+			border: none;
+			background-color: #32612d;
+			border-radius: 10px;
+			cursor: pointer;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+			width: 300px;
+		}
 	}
 }
+
 .login-button {
-	padding: 1rem ;
+	padding: 1rem;
 	color: aliceblue;
 	background-color: #000;
 	border-radius: 20px;
 	margin-top: 33px;
-    display: inline-block;
+	display: inline-block;
 }

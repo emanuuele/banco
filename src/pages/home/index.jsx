@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { formatToBRL } from 'brazilian-values';
 import { ToastContainer, toast } from 'react-toastify';
 import Modal from 'react-modal';
-import { AiFillEye, AiFillEyeInvisible, AiFillCloseCircle } from 'react-icons/ai'
+import { AiFillEye, AiFillEyeInvisible, AiOutlineLogout } from 'react-icons/ai'
 import { Link } from 'react-router-dom';
-
+import { clients } from '../../clients.js'
+// import {cpf} from '../login/login'
 import { verificarTipoValor } from '../../fungeng';
 import Botao from '../../components/Botao';
+
+import { useParams } from 'react-router-dom';
 
 
 import './styles.scss';
@@ -22,32 +25,34 @@ const customStyles = {
     },
 };
 
-const Home = ()=> {
-    const [saldo, setSaldo] = useState(Number(localStorage.getItem('saldo')) || 0);
-    const [valor, setValor] = useState(null);
+const Home = () => {
+    let { cpf } = useParams();
+    const user = clients.filter(login => login.login == cpf)
+
+    const [saldo, setSaldo] = useState(Number(user.saldo));
+    const [valor, setValor] = useState(0);
     const [humor, setHumor] = useState('😭');
     const [modalDepositIsOpen, setModalDepositIsOpen] = React.useState(false);
     const [modalWithdrawIsOpen, setModalWithdrawIsOpen] = React.useState(false);
     const [modalExtractIsOpen, setModalExtractIsOpen] = React.useState(false);
     const [eyeOpened, setEyeOpened] = useState(true)
-    const [extract, setExtract] = useState([{ action: null, date: null, valor: null }])
-
-    const user = {
-        name: "Emanuele"
-    }
+    const [extract, setExtract] = useState(user.movimentacoes)
 
     function addToExtract(action, valor) {
         setExtract(() => {
             const newExtract = [...extract]
-            let dateString = `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
+            let dateString = `${new Date().getDate()}/${new Date().getMonth()+1}/${new Date().getFullYear()}`
 
-            newExtract.unshift({ action: action, date: dateString, valor: valor })
+            newExtract.unshift({ tipo: action, data: dateString, valor: valor })
 
             return newExtract
         })
     }
 
-
+    React.useEffect(() => {
+        setSaldo(user[0].saldo)
+        setExtract(user[0].movimentacoes)
+    }, [])
 
     function saldoAlto() {
         if (saldo >= 1000) {
@@ -60,6 +65,7 @@ const Home = ()=> {
     }
 
     function deposit() {
+        // const deposit = user.movimentacoes.unshift({tipo: 'D', data:`${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`, valor: valor})
         if (!valor) {
             toast.error('Entre com um valor para depósito');
             return;
@@ -71,8 +77,8 @@ const Home = ()=> {
         toast.success('Depósito confirmado!');
         closeModal('deposit');
         addToExtract("Deposito", valor)
+        console.log(saldo)
     }
-
     function withdraw() {
         if (!valor) {
             toast.error('Entre com um valor para saque');
@@ -114,21 +120,29 @@ const Home = ()=> {
             setModalExtractIsOpen(false)
         }
     }
-    const biggerZero = extract.filter(valor => valor.valor > 0)
-    console.log(`maior que zero: ${biggerZero}`)
+
+    const valueBiggerZero = extract?.filter(valor => valor.valor > 0)
+
+    console.log({ valueBiggerZero })
+
+    console.log(`maior que zero: ${valueBiggerZero}`)
 
     useEffect(() => {
         saldoAlto();
-    }, [saldo]);
 
-    useEffect(() => {
         localStorage.setItem('saldo', saldo);
-    }, []);
+    }, [saldo]);
 
     return (
         <div className='App'>
-            <Link to='/Login' style={{marginLeft: '90%',backgroundColor: 'transparent', color:'black'}}> <AiFillCloseCircle size={'1.5rem'}/></Link>
+            <h1>{user.map((item) => {
+                return (
+                    <div>{item.name} : {humor} </div> 
+                )
+            })}</h1>
+            <Link to='/Login' style={{ marginLeft: '90%', backgroundColor: 'transparent', color: 'black' }}> <AiOutlineLogout size={'1.5rem'} /></Link>
             <div className='tela'>
+
                 <Botao name='Depositar' funcao={() => setModalDepositIsOpen(true)} color='green' />
                 <Botao name='Sacar' funcao={() => setModalWithdrawIsOpen(true)} color='red' />
                 <Botao name='Extrato' funcao={() => setModalExtractIsOpen(true)} color='black' />
@@ -148,7 +162,6 @@ const Home = ()=> {
                 >
                     <div className='content'>
                         <button onClick={() => closeModal('deposit')} className='close'>X</button>
-                        <h2>Digite um valor de Depósito</h2>
                         <div>Digite o valor: </div>
                         <div className='content-actions'>
                             <input
@@ -173,8 +186,7 @@ const Home = ()=> {
                     contentLabel='Example Modal'
                 >
                     <div className='content'>
-                        <button onClick={() => closeModal('withdraw')} className='close'>X</button>
-                        <h2>Digite um Saque</h2>
+                        <button onClick={() => closeModal('withdraw')} className='close'>x</button>
                         <div>Digite o valor: </div>
                         <div className='content-actions'>
                             <input
@@ -205,13 +217,13 @@ const Home = ()=> {
                         </tr>
                     </table>
                     <div className='content'>
-                        {biggerZero.map((item) => {
+                        {valueBiggerZero?.map((item) => {
                             return (
                                 <div>
 
                                     <table>
                                         <tr>
-                                            <td>{formatToBRL(item.valor)}</td><td>{item.action}</td><td>{item.date}</td>
+                                            <td>{formatToBRL(item.valor)}</td><td>{item.tipo=='D'?'Deposito':'Saque'}</td><td>{item.data}</td>
                                         </tr>
                                     </table>
                                 </div>
@@ -220,7 +232,7 @@ const Home = ()=> {
 
                     </div>
                 </Modal>
-                
+
             </div>
             <ToastContainer />
         </div>
