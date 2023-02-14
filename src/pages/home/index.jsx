@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { formatToBRL } from 'brazilian-values';
 import { ToastContainer, toast } from 'react-toastify';
 import Modal from 'react-modal';
-import { AiFillEye, AiFillEyeInvisible, AiFillCloseCircle } from 'react-icons/ai'
+import { AiFillEye, AiFillEyeInvisible, AiOutlineLogout } from 'react-icons/ai'
 import { Link } from 'react-router-dom';
 import { clients } from '../../clients.js'
 // import {cpf} from '../login/login'
@@ -41,7 +41,7 @@ const Home = () => {
     function addToExtract(action, valor) {
         setExtract(() => {
             const newExtract = [...extract]
-            let dateString = `${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}`
+            let dateString = `${new Date().getDate()}/${new Date().getMonth()+1}/${new Date().getFullYear()}`
 
             newExtract.unshift({ tipo: action, data: dateString, valor: valor })
 
@@ -121,11 +121,11 @@ const Home = () => {
         }
     }
 
-    const biggerZero = extract?.filter(valor => valor.valor > 0)
+    const valueBiggerZero = extract?.filter(valor => valor.valor > 0)
 
-    console.log({ biggerZero })
+    console.log({ valueBiggerZero })
 
-    console.log(`maior que zero: ${biggerZero}`)
+    console.log(`maior que zero: ${valueBiggerZero}`)
 
     useEffect(() => {
         saldoAlto();
@@ -140,7 +140,7 @@ const Home = () => {
                     <div>{item.name} : {humor} </div> 
                 )
             })}</h1>
-            <Link to='/Login' style={{ marginLeft: '90%', backgroundColor: 'transparent', color: 'black' }}> <AiFillCloseCircle size={'1.5rem'} /></Link>
+            <Link to='/Login' style={{ marginLeft: '90%', backgroundColor: 'transparent', color: 'black' }}> <AiOutlineLogout size={'1.5rem'} /></Link>
             <div className='tela'>
 
                 <Botao name='Depositar' funcao={() => setModalDepositIsOpen(true)} color='green' />
@@ -162,7 +162,6 @@ const Home = () => {
                 >
                     <div className='content'>
                         <button onClick={() => closeModal('deposit')} className='close'>X</button>
-                        <h2>Digite um valor de Depósito</h2>
                         <div>Digite o valor: </div>
                         <div className='content-actions'>
                             <input
@@ -187,8 +186,7 @@ const Home = () => {
                     contentLabel='Example Modal'
                 >
                     <div className='content'>
-                        <button onClick={() => closeModal('withdraw')} className='close'>X</button>
-                        <h2>Digite um Saque</h2>
+                        <button onClick={() => closeModal('withdraw')} className='close'>x</button>
                         <div>Digite o valor: </div>
                         <div className='content-actions'>
                             <input
@@ -219,13 +217,13 @@ const Home = () => {
                         </tr>
                     </table>
                     <div className='content'>
-                        {biggerZero?.map((item) => {
+                        {valueBiggerZero?.map((item) => {
                             return (
                                 <div>
 
                                     <table>
                                         <tr>
-                                            <td>{formatToBRL(item.valor)}</td><td>{item.tipo}</td><td>{item.data}</td>
+                                            <td>{formatToBRL(item.valor)}</td><td>{item.tipo=='D'?'Deposito':'Saque'}</td><td>{item.data}</td>
                                         </tr>
                                     </table>
                                 </div>

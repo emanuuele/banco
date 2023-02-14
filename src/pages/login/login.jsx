@@ -1,8 +1,9 @@
 import './styles.scss';
-import { Link, redirect, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { clients } from '../../clients.js'
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { TestaCPF } from '../../fungeng';
 
 function Login() {
     const navigate = useNavigate()
@@ -11,18 +12,20 @@ function Login() {
     const [password, setPassword] = useState(null)
 
     function verifyLogin() {
-        let userNotFound = true;
+        if (TestaCPF(cpf) == true) {
+            let userNotFound = true;
 
-        clients.forEach(element => {
-            if (element.login == cpf && element.senha == password) {
-                userNotFound = false
+            clients.forEach(element => {
+                if (element.login == cpf && element.senha == password) {
+                    userNotFound = false
+                }
+            });
+
+            if (userNotFound) return toast.error('login invalido')
+            else {
+                navigate(`/${cpf}`)
+                toast.success('Bem vindo')
             }
-        });       
-
-        if (userNotFound) return toast.error('login invalido')
-        else {
-            navigate(`/${cpf}`)
-            toast.success('Bem vindo')
         }
     }
 
