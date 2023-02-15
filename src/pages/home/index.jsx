@@ -122,6 +122,17 @@ const Home = () => {
             setModalExtractIsOpen(false)
         }
     }
+    async function consultarCNPJ() {
+        try {
+            const total = await axios.get(`https://publica.cnpj.ws/cnpj/${cpf}`)
+
+            const result = total.data.capital_social
+
+            setSaldo(result)
+        } catch (e) {
+            console.log(e)
+        }
+    }
 
     const valueBiggerZero = extract?.filter(valor => valor.valor > 0)
 
@@ -130,6 +141,9 @@ const Home = () => {
 
         localStorage.setItem('saldo', saldo);
     }, [saldo]);
+    useEffect(() => {
+        consultarCNPJ()
+    }, [])
 
     return (
         <div className='App'>

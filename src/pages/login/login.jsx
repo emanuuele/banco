@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { clients } from '../../clients.js'
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { TestaCPF } from '../../fungeng';
+import { TestaCPF, validarCNPJ } from '../../fungeng';
 
 function Login() {
     const navigate = useNavigate()
@@ -12,7 +12,9 @@ function Login() {
     const [password, setPassword] = useState(null)
 
     function verifyLogin() {
-        if (TestaCPF(cpf) == true) {
+        const validacao = cpf.length <= 11 ? TestaCPF(cpf) : validarCNPJ(cpf)
+
+        if (validacao == true) {
             let userNotFound = true;
 
             clients.forEach(element => {

@@ -42,4 +42,17 @@ export const clients = [
 			},
 		],
 	},
+	{
+		name: 'Emiliana',
+		senha: '1111',
+		login: '37098496000198',
+		saldo: 0,
+		movimentacoes: [
+			{
+				data: '01/01/2023',
+				tipo: 'D',
+				valor: 10,
+			},
+		],
+	},
 ];
