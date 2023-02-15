@@ -9,6 +9,8 @@ import { clients } from '../../clients.js'
 import { verificarTipoValor } from '../../fungeng';
 import Botao from '../../components/Botao';
 
+import axios from 'axios'
+
 import { useParams } from 'react-router-dom';
 
 
@@ -41,7 +43,7 @@ const Home = () => {
     function addToExtract(action, valor) {
         setExtract(() => {
             const newExtract = [...extract]
-            let dateString = `${new Date().getDate()}/${new Date().getMonth()+1}/${new Date().getFullYear()}`
+            let dateString = `${new Date().getDate()}/${new Date().getMonth() + 1}/${new Date().getFullYear()}`
 
             newExtract.unshift({ tipo: action, data: dateString, valor: valor })
 
@@ -123,10 +125,6 @@ const Home = () => {
 
     const valueBiggerZero = extract?.filter(valor => valor.valor > 0)
 
-    console.log({ valueBiggerZero })
-
-    console.log(`maior que zero: ${valueBiggerZero}`)
-
     useEffect(() => {
         saldoAlto();
 
@@ -137,7 +135,7 @@ const Home = () => {
         <div className='App'>
             <h1>{user.map((item) => {
                 return (
-                    <div>{item.name} : {humor} </div> 
+                    <div>{item.name} : {humor} </div>
                 )
             })}</h1>
             <Link to='/Login' style={{ marginLeft: '90%', backgroundColor: 'transparent', color: 'black' }}> <AiOutlineLogout size={'1.5rem'} /></Link>
@@ -223,7 +221,7 @@ const Home = () => {
 
                                     <table>
                                         <tr>
-                                            <td>{formatToBRL(item.valor)}</td><td>{item.tipo=='D'?'Deposito':'Saque'}</td><td>{item.data}</td>
+                                            <td>{formatToBRL(item.valor)}</td><td>{item.tipo == 'D' ? 'Deposito' : 'Saque'}</td><td>{item.data}</td>
                                         </tr>
                                     </table>
                                 </div>
